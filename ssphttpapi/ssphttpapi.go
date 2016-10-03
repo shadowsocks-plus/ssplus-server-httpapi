@@ -69,7 +69,9 @@ func doAddUser(args_str string) string {
 
 func onRequest(w http.ResponseWriter,r *http.Request) {
 	parts := strings.Split(r.URL.Path,"/")
-	if len(parts)!=4 {
+	w.Header().Set("Access-Control-Allow-Origin","*")
+
+	if len(parts) < 3 {
 		w.Write([]byte("Bad request"))
 		return
 	}
@@ -79,7 +81,14 @@ func onRequest(w http.ResponseWriter,r *http.Request) {
 	}
 	switch parts[2] {
 		case "addUser":
+			if len(parts) != 4 {
+				w.Write([]byte("Bad request"))
+				break
+			}
 			w.Write([]byte(doAddUser(parts[3])))
+			break
+		case "ping":
+			w.Write([]byte("Pong"))
 			break
 		default:
 			w.Write([]byte("Function not implemented"))
